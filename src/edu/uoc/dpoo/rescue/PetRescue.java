@@ -246,12 +246,15 @@ public class PetRescue {
    * @return The home where the pet is, if its stay is opened
    */
   public Home getCurrentHome(String id) {
+    return findPet(id).getCurrentHome();
+    /*
     Pet p = this.findPet(id);
 
     if(p != null)
       return p.getCurrentHome();
     else
       return null;
+    */
   }
 
   /**
