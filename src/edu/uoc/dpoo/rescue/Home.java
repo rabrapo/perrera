@@ -75,18 +75,18 @@ public abstract class Home {
   }
 
   /**
-   * Buscar el home en las STAYS e ir añadiendo los pets correspondientes con una estancia activa 
+   * Search opened stays and add its pet
    * @return The list of the currents pets with an active stay in this home
    */
   public List<Pet> getCurrentPets() {
-    for(Stay st : stays) {
-      //check if the pet's stay is active
-      if(st.isActive() && st.getPet() != null)
-        this.pets.add(st.getPet());
-      if(!st.isActive())
-        this.pets.remove(st.getPet());
+    List<Pet> lp = new ArrayList<>();
+    
+    for(Stay s : stays) {
+      if(s.isActive() && s.getHome() == this)
+        lp.add(s.getPet());
     }
-    return pets;
+    
+    return lp;
   }
 
 	/**

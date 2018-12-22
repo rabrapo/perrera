@@ -184,10 +184,8 @@ public class PetRescue {
    */
   public void assignHome(Pet pet, Home home) {
     Stay s = new Stay(new Date(), pet, home);
-    if(s.getStartedAt() != null) {
-      home.addStay(s);
-      pet.addStay(s);
-    }
+    home.addStay(s);
+    pet.addStay(s);
   }
 
   /**
