@@ -26,6 +26,7 @@ public class PetRescue {
     volunteers = new ArrayList<>();
     alerts = new ArrayList<>();
     homes = new ArrayList<>();
+    listeners = new ArrayList<>();
   }
 
 	/**
@@ -186,6 +187,17 @@ public class PetRescue {
     Stay s = new Stay(new Date(), pet, home);
     home.addStay(s);
     pet.addStay(s);
+    this.notifyNewHome(pet, home);
+  }
+  
+  /**
+   *
+   * @param p
+   * @param h
+   */
+  public void notifyNewHome(Pet p, Home h) {
+    for(EventListener eL : this.listeners)
+      eL.onNewHome(p, h);
   }
 
   /**
@@ -245,14 +257,6 @@ public class PetRescue {
    */
   public Home getCurrentHome(String id) {
     return findPet(id).getCurrentHome();
-    /*
-    Pet p = this.findPet(id);
-
-    if(p != null)
-      return p.getCurrentHome();
-    else
-      return null;
-    */
   }
 
   /**
@@ -286,12 +290,22 @@ public class PetRescue {
   }
 
   /**
-   * Assign the specified alert to the specified volunteer
+   * Assign the specified alert to the specified volunteer. Send an email to the volunteer.
    * @param alert
    * @param volunteer
    */
   public void assignAlert(Alert alert, Volunteer volunteer) {
     alert.assign(volunteer);
+    this.notifyNewAlert(alert);
+  }
+  
+  /**
+   *
+   * @param a
+   */
+  public void notifyNewAlert(Alert a) {
+    for(EventListener e : this.listeners)
+      e.onNewAlert(a);
   }
 
   /**
@@ -351,10 +365,12 @@ public class PetRescue {
 	}
   
   /**
-   *
+   * Register a new listener
    * @param listener
    */
   public void addListener(EventListener listener) {
-    this.listeners.add(listener);
+    if(listener != null)
+      this.listeners.add(listener);
   }
+  
 }

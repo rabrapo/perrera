@@ -5,6 +5,8 @@
  */
 package edu.uoc.dpoo.rescue;
 
+import java.util.List;
+
 /**
  *
  * @author rafa
@@ -52,109 +54,167 @@ public class Perrera {
     int shelter2_capacity = 5;
     int shelter2_maxDays = 4;
     boolean shelter2_vet = false;
-    
+
     PetRescue rescue = new PetRescue();
+    MailBox mailbox = new MailBox();
     
-    // Check that initially the list of alerts is empty
-    /*
-    System.out.println("No rescates");
-    System.out.println("Nº de alertas: " + rescue.getAlerts().size());
-    */
-    // Add news rescues
-    rescue.newRescue(pet1_type, pet1_id, pet1_name, pet1_pdd);
-    rescue.newRescue(pet2_type, pet2_id, pet2_name, pet2_pdd);
-    rescue.newRescue(pet3_type, pet3_id, pet3_name, pet3_pdd);    
-    // Check the size of the list of alerts
-    /*
-    System.out.println("Hay 3 rescates");
-    System.out.println("Nº de alertas: " + rescue.getAlerts().size());
+    rescue.addListener(mailbox);
+    
+    System.out.println("*** Events ***");
     // Check that initially the list of volunteers is empty
-    System.out.println("Check that initially the list of volunteers is empty");
-    System.out.println("Nº voluntarios: " + rescue.getRegisteredVolunteers().size());
-    */
+    if(rescue.getRegisteredVolunteers() == null)
+      System.out.println("MAL: getRegisteredVolunteers() == null");
+    if(!rescue.getRegisteredVolunteers().isEmpty())
+      System.out.println("MAL: getRegisteredVolunteers() no vacío");
     try {
-      rescue.registerVolunteer(volunteer1_name, volunteer1_email, volunteer1_allowPdd);
-      rescue.registerVolunteer(volunteer2_name, volunteer2_email, volunteer2_allowPdd);
-      //System.out.println("Voluntarios added: " + rescue.getRegisteredVolunteers().size());
-    } catch(RescueException e) {
-      System.out.println("Error: " + e.getMessage());
-    }
+      // Add news volunteers
+      rescue.registerVolunteer(volunteer1_name, volunteer1_email, volunteer1_allowPdd);            
+      rescue.registerVolunteer(volunteer2_name, volunteer2_email, volunteer2_allowPdd);            
+    } catch (RescueException e){            
+      System.out.println("Excepción: " + e.getMessage());
+    }        
+    // Check that the list of volunteers has two elements
+    if(rescue.getRegisteredVolunteers() == null)
+      System.out.println("MAL: getRegisteredVolunteers() == null");
+    if(rescue.getRegisteredVolunteers().size() != 2)
+      System.out.println("MAL: getRegisteredVolunteers().size() tiene que ser 2");
     // Check that initially the list of homes is empty
-    //System.out.println("Check that initially the list of homes is empty: " + rescue.getHomes().size());
-    // Add a new Shelter home        
+    if(rescue.getHomes() == null)
+      System.out.println("MAL: getHomes() == null");
+    if(!rescue.getHomes().isEmpty())
+      System.out.println("MAL: getHomes() no está vacío");
+    // Add a new Shelter home  
     try {            
       Shelter s = rescue.registerShelter(shelter1_name, shelter1_address, shelter1_email, shelter1_garden, shelter1_pdd, shelter1_capacity, shelter1_maxDays, shelter1_vet);
-      // Add news pettypes  
-      s.addType(PetType.DOG);
-      s.addType(PetType.CAT);
-      //System.out.println("PetTypes allowed: " + s.getAllowed().size());
+      if(s == null)
+        System.out.println("MAL: shelter1 null");
+      else {
+        // Add a new types  
+        s.addType(PetType.DOG);
+        s.addType(PetType.CAT);
+        if(s.getAllowed().size() != 2)
+          System.out.println("MAL: getAllowed() no es 2");
+      }
     } catch (RescueException e){            
-        System.out.println("Error: " + e.getMessage());           
+      System.out.println("Excepción: " + e.getMessage());           
     }
     // Add a new Shelter home        
     try {            
       Shelter s = rescue.registerShelter(shelter2_name, shelter2_address, shelter2_email, shelter2_garden, shelter2_pdd, shelter2_capacity, shelter2_maxDays, shelter2_vet);
-      // Add news pettypes  
-      s.addType(PetType.DOG);
-      s.addType(PetType.CAT);
-      //System.out.println("PetTypes allowed: " + s.getAllowed().size());
+      if(s == null)
+        System.out.println("MAL: shelter2 null");
+      else {
+        // Add a new type  
+        s.addType(PetType.CAT);
+        if(s.getAllowed().size() != 1)
+          System.out.println("MAL: getAllowed() no es 1");        
+      }
     } catch (RescueException e){            
-        System.out.println("Error: " + e.getMessage());           
+      System.out.println("Excepción: " + e.getMessage());           
     }
-    System.out.println("*** ASSIGN HOME ***");
-    Pet pet_no_pdd = rescue.findPet(pet1_id);
-    Pet pet_pdd = rescue.findPet(pet2_id);
-    Pet pet_cat = rescue.findPet(pet3_id);
-    if(pet_no_pdd == null)
-      System.out.println("MAL: 1º nulo");
-    if(pet_pdd == null)
-      System.out.println("MAL: 2º nulo");
-    if(pet_cat == null)
-      System.out.println("MAL: 3º nulo");
-    Home home_all = rescue.getRegisteredHomes().get(0);
-    if(home_all == null)
-      System.out.println("MAL: 4º nulo");
-    Home home_cat = rescue.getRegisteredHomes().get(1);
-    if(home_cat == null)
-      System.out.println("MAL: 5º nulo");
-    rescue.assignHome(pet_cat, home_all);
-    if(rescue.findHome(pet1_id) == null)
-      System.out.println("MAL: 6º nulo");
-    if(rescue.findHome(pet2_id) == null)
-      System.out.println("MAL: 7º nulo");
-    if(pet_cat.getCurrentHome().equals(home_all))
-      System.out.println("BIEN");
-    if(pet_pdd.getCurrentHome() != null)
-      System.out.println("MAL: 8 null");
-    if(pet_no_pdd.getCurrentHome() != null)
-      System.out.println("MAL: 9 null");
-    System.out.println("* FINAL *");
-    System.out.println("home_all.getCurrentPets().size(): " + home_all.getCurrentPets().size());
-    System.out.println("home_cat.getCurrentPets().size(): " + home_cat.getCurrentPets().size());
-/*    
-    System.out.println("*** HOME PETS ***");
-    Pet pet_no_pdd = rescue.findPet(pet1_id);
-    if(pet_no_pdd == null)
-      System.out.println("MAL: pet_no_pdd es null");
-    Home home = rescue.getRegisteredHomes().get(0);
-    if(home == null)
-      System.out.println("MAL: home es null");
-    Stay s = new Stay(new Date(), pet_no_pdd, home);  
-    if(!s.isActive())
-      System.out.println("MAL: stay es NO activa");
-    if(home != null)
-      if(!home.getCurrentPets().isEmpty())
-        System.out.println("MAL: home.getCurrentPets().size() != 0");
-    if(home.getPets() != null) {
-      home.getPets().add(s);
-      if(home.getCurrentPets().size() != 1)
-        System.out.println("MAL: home.getCurrentPets().size() != 1");
-      s.setFinisheddAt(new Date());
-      if(s.isActive())
-        System.out.println("MAL: stay es activa");
-      if(!home.getCurrentPets().isEmpty())
-        System.out.println("MAL: home.getCurrentPets().size() != 0");
+    // Check list of homes
+    if(rescue.getHomes() == null)
+      System.out.println("MAL: rescue.getHomes() es null");
+    if(rescue.getHomes().size() != 2)
+      System.out.println("MAL: rescue.getHomes().size() no es 2");
+    // Check that initially the list of alerts is empty
+    if(rescue.getAlerts() == null)
+      System.out.println("MAL: getAlerts() == null");
+    if(!rescue.getAlerts().isEmpty())
+      System.out.println("MAL: getAlerts().isEmpty()");
+    // Check that initially the list of mails is empty
+    if(mailbox.getMails() == null)
+      System.out.println("MAL: mailbox.getMails() es nulo");
+    if(!mailbox.getMails().isEmpty())
+      System.out.println("");
+    // Add a new rescue
+    rescue.newRescue(pet1_type, pet1_id, pet1_name, pet1_pdd);
+    // Check that the list of alerts have one element
+    if(rescue.getAlerts() == null)
+      System.out.println("MAL: rescue.getAlerts() es null");
+    if(rescue.getAlerts().size() != 1)
+      System.out.println("MAL: rescue.getAlerts().size() no es 1");
+    // Search for the new pet
+    Pet pet = rescue.findPet(pet1_id);
+    if(pet == null)
+      System.out.println("MAL: pet es null");
+    // Search for a volunteer
+    List<Volunteer> availableVolunteers = rescue.findVolunteer(pet1_id);
+    if(availableVolunteers == null)
+      System.out.println("MAL: availableVolunteers es null");
+    else {
+      if(availableVolunteers.isEmpty())
+        System.out.println("MAL: availableVolunteers.size() está vacío.");  
+      else {
+        Volunteer volunteer = availableVolunteers.get(0);
+        // Get the alert
+        Alert rescueAlert = rescue.getUnassignedAlerts().get(0);
+        if(rescueAlert == null)
+          System.out.println("MAL: rescueAlert");
+        else {
+          // Check that the list of mails is empty
+          if((mailbox.getMails() == null))
+            System.out.println("MAL: (mailbox.getMails() nulo");
+          else {
+            if(!mailbox.getMails().isEmpty())
+              System.out.println("MAL: mailbox.getMails() no está vacío");
+            else {
+              rescue.assignAlert(rescueAlert, volunteer);
+              // Check that the list of mails is not empty
+              if((mailbox.getMails() == null))
+                System.out.println("MAL: mailbox.getMails() nulo");
+              else {
+                if(mailbox.getMails().size() != 1)
+                  System.out.println("MAL: mailbox.getMails().size() debe ser 1");
+                else {
+                  // Check volunteer mails
+                  if(mailbox.getSentMails(volunteer.getEmail()) == null)
+                    System.out.println("MAL: mailbox.getSentMails(volunteer.getEmail()) es null");
+                  else {
+                    if(mailbox.getSentMails(volunteer.getEmail()).size() != 1)
+                      System.out.println("MAL: mailbox.getSentMails(volunteer.getEmail()).size() debe ser 1");
+                    else {
+                      //Search for a home
+                      List<Home> availableHomes = rescue.findHome(pet.getId());
+                      if(availableHomes == null)
+                        System.out.println("MAL: availableHomes es null");
+                      else {
+                        if(availableHomes.isEmpty())
+                          System.out.println("MAL: availableHomes.isEmpty()");
+                        else {
+                          Home home = availableHomes.get(0);
+                          // Assign the home
+                          rescue.assignHome(pet, home);
+                          // Check that the list of mails is not empty
+                          if(mailbox.getMails() == null)
+                            System.out.println("MAL: mailbox.getMails() null");
+                          else {
+                            if(mailbox.getMails().size() != 2)
+                              System.out.println("MAL: mailbox.getMails().size()");
+                            else {
+                              // Check home mails
+                              if(mailbox.getSentMails(home.getEmail()) == null)
+                                System.out.println("MAL: mailbox.getSentMails(home.getEmail()) null");
+                              else {
+                                if(mailbox.getSentMails(home.getEmail()).size() == 1)
+                                  System.out.println("BIEN");
+                                else
+                                  System.out.println(mailbox.getSentMails(home.getEmail()).size());
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
     }
-*/
+
+    
   }
 }

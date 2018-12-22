@@ -1,8 +1,4 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+
 package edu.uoc.dpoo.rescue;
 
 import java.util.ArrayList;
@@ -12,7 +8,7 @@ import java.util.List;
  *
  * @author Juan Carlos Braza Polanco
  */
-public class MailBox {
+public class MailBox implements EventListener {
   private List<Mail> mails;
 
   /**
@@ -31,11 +27,22 @@ public class MailBox {
 	}
 
   public void sendMail(String email, String subject, String body) {
-  
+    this.mails.add(new Mail(email, subject, body));
   }
 
+  /**
+   *
+   * @param email
+   * @return
+   */
   public List<Mail> getSentMails(String email) {
-    return null;
+    List<Mail> lm = new ArrayList<>();
+    
+    for(Mail m : mails)
+      if(m.getEmail().equals(email))
+        lm.add(m);
+    
+    return lm;
   }
 
 	/**
@@ -53,4 +60,33 @@ public class MailBox {
 	public void setMails(List<Mail> mails) {
 		this.mails = mails;
 	}
+
+  /**
+   * The home receives an email with the data of the new pet
+   * @param pet Pet to be added to the home
+   * @param home Home where the pet could stay
+   */
+  @Override
+  public void onNewHome(Pet pet, Home home) {
+    this.sendMail(home.getEmail(), "New Stay", pet.getId());
+  }
+
+  /**
+   * 
+   * @param pet
+   * @param volunteer
+   */
+  @Override
+  public void onNewRescue(Pet pet, Volunteer volunteer) {
+    
+  }
+
+  /**
+   * The volunteer receives an email with data of the new alert
+   * @param alert The new alert with the data of the pet
+   */
+  @Override
+  public void onNewAlert(Alert alert) {
+    this.sendMail(alert.getAssigned().getEmail(), "New Alert", alert.getPet().getId());
+  }
 }
